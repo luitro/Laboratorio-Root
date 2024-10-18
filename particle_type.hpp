@@ -10,7 +10,7 @@ class ParticleType {
   inline const double GetMass() const { return Mass_; }
   inline const int GetCharge() const { return Charge_; }
   virtual void Print() const;
-  ParticleType(char Name, double Mass, int Charge);
+  ParticleType(const char* Name, const double Mass, const int Charge);
 
  private:
   const char* Name_;

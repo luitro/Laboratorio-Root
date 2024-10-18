@@ -1,7 +1,15 @@
 #include "particle.hpp"
 
-const size_t Particle::MaxNumParticleType_ = 10;
-Particle::Particle(std::string NameParticle, double Px = 0, double Py = 0,
+Particle::Particle(const char* NameParticle, double Px = 0, double Py = 0,
                    double Pz = 0)
-    : P.x(Px),
-P.y(Py), P.z(Pz) {}
+    : P_({Px,Py,Pz}) {
+        Index_ = FindParticle(NameParticle);
+    }
+
+int Particle::FindParticle(const char* NameParticle_) {
+    for (int i = 0; i < MaxNumParticleType_; i++) {
+      if ((*Particles_[i]).GetName() == NameParticle_)
+        return i;
+      else std::cout << "Particle name not corresponding" << std::endl; 
+    }
+  }

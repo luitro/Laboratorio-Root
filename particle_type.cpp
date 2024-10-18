@@ -5,5 +5,5 @@ void ParticleType::Print() const {
             << " ;\nCharge: " << Charge_ << std::endl;
 }
 
-ParticleType::ParticleType(char Name, double Mass, int Charge)
-    : Name_(&Name), Mass_(Mass), Charge_(Charge) {}
+ParticleType::ParticleType(const char* Name, const double Mass, const int Charge)
+    : Name_(Name), Mass_(Mass), Charge_(Charge) {}
