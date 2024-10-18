@@ -1,3 +1,7 @@
 #include "particle.hpp"
 
-Particle::Particle(std::string NameParticle, double Px, double Py, double Pz) : P.x_(Px), P.y_(Py), P.z_(Pz){}
+const size_t Particle::MaxNumParticleType_ = 10;
+Particle::Particle(std::string NameParticle, double Px = 0, double Py = 0,
+                   double Pz = 0)
+    : P.x(Px),
+P.y(Py), P.z(Pz) {}
