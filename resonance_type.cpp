@@ -5,5 +5,5 @@ void ResonanceType::Print() const {
   std::cout << "Width: " << Width_ << std::endl;
 }
 
-ResonanceType::ResonanceType(char Name, double Mass, int Charge, double Width)
+ResonanceType::ResonanceType(const char* Name, const double Mass, const int Charge, const double Width)
     : ParticleType(Name, Mass, Charge), Width_(Width) {};
