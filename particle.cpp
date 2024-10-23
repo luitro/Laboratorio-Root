@@ -2,23 +2,33 @@
 
 #include <cmath>
 
-Particle::Particle(const char* NameParticle, double Px = 0, double Py = 0,
-                   double Pz = 0)
-    : P_({Px, Py, Pz}) {
-  Index_ = FindParticle(NameParticle);
-}
-void Particle::AddParticleType(const char* Name, const double Mass,
+ParticleType* Particle::Particles_[MaxNumParticleType_];
+int Particle::NParticleType_ = 0;
+
+Particle::Particle(const char* NameParticle, double Px, double Py, double Pz)
+    : Index_(FindParticle(NameParticle)), P_({Px, Py, Pz}) {}
+
+bool Particle::AddParticleType(const char* Name, const double Mass,
                                const int Charge, const double Width) {
-  if (NParticleType_ == 0) {
-    Particles_[NParticleType_] = &(ParticleType(Name, Mass, Charge));
-  }
-  if (FindParticle(Name) != -1)
+  if (FindParticle(Name) != -1) {
     std::cout << "Particle " << Name << " already exists\n";
-  else {
-    NParticleType_++;
-    Particles_[NParticleType_] = &(ParticleType(Name, Mass, Charge));
+    return false;
   }
-};
+  if (NParticleType_ > static_cast<int>(MaxNumParticleType_)) {
+    std::cout << "You have reached the maximum particle type limit";
+    return false;
+  }
+  if (Width == 0) {
+    Particles_[NParticleType_] = new ParticleType(Name, Mass, Charge);
+    NParticleType_++;
+    return true;
+  } else {
+    Particles_[NParticleType_] = new ResonanceType(Name, Mass, Charge, Width);
+    NParticleType_++;
+    return true;
+  }
+  return false;
+}
 
 void Particle::SetIndex(const int Index) {
   if (Index != Index_) Index_ = Index;
@@ -29,25 +39,30 @@ void Particle::SetIndex(const char* Name) {
 }
 
 int Particle::FindParticle(const char* NameParticle_) {
-  for (int i = 0; i < MaxNumParticleType_; i++) {
-    if ((*Particles_[i]).GetName() == NameParticle_)
+  for (int i = 0; i < NParticleType_; i++) {
+    if (Particles_[i] != nullptr && Particles_[i]->GetName() == NameParticle_) {
       return i;
+    }
+  }
+  std::cout << "Particle " << NameParticle_ << " not found" << std::endl;
+  return -1;
+}
+
+void Particle::PrintParticles() {
+  std::cout << "Particle Table:\n";
+  for (const auto& i : Particles_) {
+    if (i != nullptr)
+      std::cout << i->GetName() << '\t';
     else {
-      std::cout << "Particle name not corresponding" << std::endl;
-      return -1;
+      std::cout << std::endl;
+      break;
     }
   }
 }
 
-void Particle::PrintParticles() {
-  for (const auto& i : Particles_) {
-    std::cout << "Particle Table:\n" << i->GetName() << '\t';
-  }
-}
-
 void Particle::PrintParticle() {
-  std::cout << "Particle index: " << Index_
-            << "\nParticle name: " << Particles_[Index_]->GetName()
+  std::cout << "Particle name: " << Particles_[Index_]->GetName()
+            << "\nParticle index: " << Index_
             << "\nParticle impulse components: (" << P_.x << ", " << P_.y
             << ", " << P_.z << ")\n";
 }
@@ -67,5 +82,5 @@ double Particle::InvMass(const Particle& p) {
 void Particle::SetP(double px, double py, double pz) {
   P_.x = px;
   P_.y = py;
-  P_.z = pz; 
+  P_.z = pz;
 }

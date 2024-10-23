@@ -8,7 +8,3 @@ void ParticleType::Print() const {
 ParticleType::ParticleType(const char* Name, const double Mass, const int Charge)
     : Name_(Name), Mass_(Mass), Charge_(Charge) {}
 
-void ParticleType::PrintParticle() {
-  for(const auto& i: Particles_){
-  std::cout << ""}
-}

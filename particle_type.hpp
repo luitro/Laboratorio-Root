@@ -7,12 +7,11 @@
 class ParticleType {
  public:
   inline const char* GetName() const { return Name_; }
-  inline const double GetMass() const { return Mass_; }
-  inline const int GetCharge() const { return Charge_; }
+  inline double GetMass() const { return Mass_; }
+  inline int GetCharge() const { return Charge_; }
   virtual void Print() const;
   ParticleType(const char* Name, const double Mass, const int Charge);
-  static void PrintParticle();
-
+  
  private:
   const char* Name_;
   const double Mass_;

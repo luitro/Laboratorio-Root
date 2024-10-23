@@ -1,7 +1,6 @@
 #ifndef PARTICLE_HPP
 #define PARTICLE_HPP
 
-#include "particle_type.hpp"
 #include "resonance_type.hpp"
 
 struct Impulse {
@@ -12,10 +11,10 @@ struct Impulse {
 
 class Particle {
  public:
-  Particle(const char* NameParticle, double Px, double Py, double Pz);
-  inline const int GetIndex() const { return Index_; }
-  static void AddParticleType(const char* Name, const double Mass,
-                              const int Charge, const double Width);
+  Particle(const char* NameParticle, double Px = 0, double Py = 0, double Pz = 0);
+  inline int GetIndex() const { return Index_; }
+  static bool AddParticleType(const char* Name, const double Mass,
+                              const int Charge, const double Width = 0);
   void SetIndex(const int Index);
   void SetIndex(const char* Name);
   static void PrintParticles();
