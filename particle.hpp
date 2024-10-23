@@ -27,6 +27,8 @@ class Particle {
   double InvMass(const Particle& p);
   void SetP(double px, double py, double pz);
 
+  int Decay2body(Particle &dau1,Particle &dau2) const;
+
  private:
   static const size_t MaxNumParticleType_ = 10;
   static ParticleType* Particles_[MaxNumParticleType_];
@@ -34,6 +36,8 @@ class Particle {
   int Index_;
   Impulse P_;
   static int FindParticle(const char* NameParticle_);
+
+  void Boost(double bx, double by, double bz);
 };
 
 #endif

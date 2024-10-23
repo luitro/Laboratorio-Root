@@ -11,7 +11,9 @@ class ParticleType {
   inline int GetCharge() const { return Charge_; }
   virtual void Print() const;
   ParticleType(const char* Name, const double Mass, const int Charge);
-  
+
+  inline virtual double GetWidth() const { return 0; }
+
  private:
   const char* Name_;
   const double Mass_;
