@@ -11,7 +11,7 @@ struct Impulse {
 
 class Particle {
  public:
-  Particle(const char* NameParticle, double Px = 0, double Py = 0, double Pz = 0);
+  Particle(const char* NameParticle = "Null", double Px = 0, double Py = 0, double Pz = 0);
   inline int GetIndex() const { return Index_; }
   static bool AddParticleType(const char* Name, const double Mass,
                               const int Charge, const double Width = 0);
