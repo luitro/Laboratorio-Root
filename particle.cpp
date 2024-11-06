@@ -1,5 +1,5 @@
 #include "particle.hpp"
-
+#include <cstring>
 #include <cmath>
 
 ParticleType* Particle::Particles_[MaxNumParticleType_];
@@ -26,7 +26,7 @@ bool Particle::AddParticleType(const char* Name, const double Mass,
   } else {
     Particles_[NParticleType_] = new ResonanceType(Name, Mass, Charge, Width);
     NParticleType_++;
-    std::cout << "Particle" << Name << "has been added correctly" << std::endl;
+    std::cout << "Particle " << Name << " has been added correctly" << std::endl;
     return true;
   }
   return false;
@@ -46,9 +46,9 @@ int Particle::FindParticle(const char* NameParticle_) {
       return i;
     }
   }
-  /* if (NameParticle_ != "Null") {
+  /* if (NameParticle_ != '/0') {
     std::cout << "Particle " << NameParticle_ << " not found" << std::endl;
-  } */ 
+  } */
   return -1;
 }
 

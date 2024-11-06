@@ -9,12 +9,12 @@
 #include "particle.hpp"
 
 int main() {
-  Particle::AddParticleType("Pi+", 0.13957, 1);
-  Particle::AddParticleType("Pi-", 0.13957, -1);
-  Particle::AddParticleType("K+", 0.49367, 1);
-  Particle::AddParticleType("K-", 0.49367, -1);
-  Particle::AddParticleType("P+", 0.93827, 1);
-  Particle::AddParticleType("P-", 0.93827, -1);
+  Particle::AddParticleType("Pi+", 0.13957, 1, 0);
+  Particle::AddParticleType("Pi-", 0.13957, -1, 0);
+  Particle::AddParticleType("K+", 0.49367, 1, 0);
+  Particle::AddParticleType("K-", 0.49367, -1, 0);
+  Particle::AddParticleType("P+", 0.93827, 1, 0);
+  Particle::AddParticleType("P-", 0.93827, -1, 0);
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
 
   gRandom->SetSeed();
@@ -25,7 +25,7 @@ int main() {
   Double_t theta;
   Double_t p;
   Double_t x;
-  int firstempty = 100;
+  int firstempty;
   double PiK = 0.13957 + 0.49367;
 
   TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 1E7);
@@ -50,6 +50,7 @@ int main() {
   TH1F *h13 = new TH1F("h13", "h11-h10", 1E5, 0, 10);
 
   for (int i = 0; i < 1E5; ++i) {
+    firstempty = 100;
     for (Int_t j = 0; j < 100; ++j) {
       phi = gRandom->Uniform(0., 2 * TMath::Pi());
       theta = gRandom->Uniform(0., TMath::Pi());
@@ -97,10 +98,10 @@ int main() {
       h6->Fill(EventParticles[j].Energy());
     }
 
-    for (int a = 0; a < N; ++a) {
+    for (int a = 0; a < firstempty; ++a) {
       if (EventParticles[a].GetIndex() != -1 &&
           EventParticles[a].GetIndex() != 6) {
-        for (int b = a + 1; b < N; ++b) {
+        for (int b = a + 1; b < firstempty; ++b) {
           if (EventParticles[b].GetIndex() != -1 &&
               EventParticles[b].GetIndex() != 6) {
             Double_t c = EventParticles[a].InvMass(EventParticles[b]);
@@ -108,12 +109,12 @@ int main() {
             if (((EventParticles[a].GetIndex() + EventParticles[b].GetIndex()) %
                  2) == 0) {
               h8->Fill(c);
-              if (EventParticles[a].GetMass() + EventParticles->GetMass() ==
+              if (EventParticles[a].GetMass() + EventParticles[b].GetMass() ==
                   PiK)
                 h10->Fill(c);
             } else {
               h9->Fill(c);
-              if (EventParticles[a].GetMass() + EventParticles->GetMass() ==
+              if (EventParticles[a].GetMass() + EventParticles[b].GetMass() ==
                   PiK)
                 h11->Fill(c);
             }
@@ -142,4 +143,6 @@ int main() {
   h11->Write();
   h12->Write();
   outputFile->Close();
+
+   std::cout << "Fino a qui tutto bene" << std::endl;
 }
