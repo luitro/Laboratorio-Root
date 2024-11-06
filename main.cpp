@@ -29,25 +29,38 @@ int main() {
   double PiK = 0.13957 + 0.49367;
 
   TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 1E7);
+  h1->Sumw2();
   TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, 2 * TMath::Pi());
+  h2->Sumw2();
   TH1F *h3 = new TH1F("h3", "Azimuthal angles", 1E3, 0, TMath::Pi());
+  h3->Sumw2();
   TH1F *h4 = new TH1F("h4", "Impulse", 1E4, 0, 10);
+  h4->Sumw2();
   TH1F *h5 = new TH1F("h5", "Transverse impulse", 1E4, 0, 10);
+  h5->Sumw2();
   TH1F *h6 = new TH1F("h6", "Energy", 1E4, 0, 10);
+  h6->Sumw2();
   TH1F *h7 = new TH1F("h7", "Invariant mass between all particles", 1E5, 0, 10);
+  h7->Sumw2();
   TH1F *h8 = new TH1F(
       "h8", "Invariant mass between concordant charge particles", 1E5, 0, 10);
+  h8->Sumw2();
   TH1F *h9 =
       new TH1F("h9", "Invariant mass between disconcordant charge particles",
                1E5, 0, 10);
+  h9->Sumw2();
   TH1F *h10 = new TH1F(
       "h10", "Invariant mass between concordant charge Pi and K particles", 1E5,
       0, 10);
+  h10->Sumw2();
   TH1F *h11 = new TH1F(
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
       1E5, 0, 10);
+  h11->Sumw2();
   TH1F *h12 = new TH1F("h12", "Benchmark", 1E5, 0, 10);
-  TH1F *h13 = new TH1F("h13", "h11-h10", 1E5, 0, 10);
+  h12->Sumw2();
+  TH1F *h13 = new TH1F("h13", "K*", 1E5, 0, 10);
+  h13->Sumw2();
 
   for (int i = 0; i < 1E5; ++i) {
     firstempty = 100;
@@ -123,26 +136,12 @@ int main() {
       }
     }
   }
-
-  h10->Sumw2();
-  h11->Sumw2();
   h13->Add(h11, h10, 1, -1);
 
   std::cout << h12->GetMean() << '\t' << h12->GetRMS() << std::endl;
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
-  h1->Write();
-  h2->Write();
-  h3->Write();
-  h4->Write();
-  h5->Write();
-  h6->Write();
-  h7->Write();
-  h8->Write();
-  h9->Write();
-  h10->Write();
-  h11->Write();
-  h12->Write();
+  outputFile->Write();
   outputFile->Close();
 
-   std::cout << "Fino a qui tutto bene" << std::endl;
+  std::cout << "Fino a qui tutto bene" << std::endl;
 }
