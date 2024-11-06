@@ -21,10 +21,12 @@ bool Particle::AddParticleType(const char* Name, const double Mass,
   if (Width == 0) {
     Particles_[NParticleType_] = new ParticleType(Name, Mass, Charge);
     NParticleType_++;
+    std::cout << "Particle " << Name << " has been added correctly" << std::endl;
     return true;
   } else {
     Particles_[NParticleType_] = new ResonanceType(Name, Mass, Charge, Width);
     NParticleType_++;
+    std::cout << "Particle" << Name << "has been added correctly" << std::endl;
     return true;
   }
   return false;
@@ -44,7 +46,9 @@ int Particle::FindParticle(const char* NameParticle_) {
       return i;
     }
   }
-  std::cout << "Particle " << NameParticle_ << " not found" << std::endl;
+  /* if (NameParticle_ != "Null") {
+    std::cout << "Particle " << NameParticle_ << " not found" << std::endl;
+  } */ 
   return -1;
 }
 

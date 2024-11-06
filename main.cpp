@@ -1,8 +1,11 @@
-#include "TH1.h"
-#include "TMath.h"
-#include "TROOT.h"
-#include "TRandom.h"
-#include "TFile.h"
+#include <TApplication.h>
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TH1F.h>
+#include <TMath.h>
+#include <TROOT.h>
+#include <TRandom.h>
+
 #include "particle.hpp"
 
 int main() {
@@ -17,7 +20,7 @@ int main() {
   gRandom->SetSeed();
 
   int N = 120;
-  Particle EventParticles[N];  // sistemare il messaggio findparticle
+  Particle EventParticles[N];
   Double_t phi;
   Double_t theta;
   Double_t p;
@@ -43,10 +46,8 @@ int main() {
   TH1F *h11 = new TH1F(
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
       1E5, 0, 10);
-  TH1F *h12 = new TH1F(
-      "h12", "Benchmark", 1E5, 0, 10);
-  TH1F *h13 = new TH1F(
-      "h13", "h11-h10", 1E5, 0, 10);
+  TH1F *h12 = new TH1F("h12", "Benchmark", 1E5, 0, 10);
+  TH1F *h13 = new TH1F("h13", "h11-h10", 1E5, 0, 10);
 
   for (int i = 0; i < 1E5; ++i) {
     for (Int_t j = 0; j < 100; ++j) {
@@ -120,11 +121,13 @@ int main() {
         }
       }
     }
-    h10->Sumw2();
-    h11->Sumw2();
-    h13->Add(h11, h10, 1, -1); 
   }
-  std::cout<< h12->GetMean()<< '\t' << h12->GetRMS() << std::endl;
+
+  h10->Sumw2();
+  h11->Sumw2();
+  h13->Add(h11, h10, 1, -1);
+
+  std::cout << h12->GetMean() << '\t' << h12->GetRMS() << std::endl;
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
   h1->Write();
   h2->Write();
