@@ -28,7 +28,7 @@ int main() {
   int firstempty;
   double PiK = 0.13957 + 0.49367;
 
-  TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 1E7);
+  TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 7);
   h1->Sumw2();
   TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, 2 * TMath::Pi());
   h2->Sumw2();
@@ -140,7 +140,18 @@ int main() {
 
   std::cout << h12->GetMean() << '\t' << h12->GetRMS() << std::endl;
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
-  outputFile->Write();
+  h1->Write();
+  h2->Write();
+  h3->Write();
+  h4->Write();
+  h5->Write();
+  h6->Write();
+  h7->Write();
+  h8->Write();
+  h9->Write();
+  h10->Write();
+  h11->Write();
+  h12->Write();
   outputFile->Close();
 
   std::cout << "Fino a qui tutto bene" << std::endl;

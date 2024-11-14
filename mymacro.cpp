@@ -52,7 +52,7 @@ void mymacro() {
     double expectedContent = expectedProportions[bin - 1] * Entries;
     double z = (content - expectedContent) / error;
     std::cout << "Bin[ " << bin
-              << " ] has a standard normal variable: z = " << z << std::endl;
+              << " ] has "<< content <<" entries and a standard normal variable: z = " << z << std::endl;
   }
 
   double chisquare;
@@ -115,16 +115,10 @@ void mymacro() {
   else
     std::cout << "Something with hImpulse is wrong " << std::endl;
 
-  TF1 *fitImpulse = new TF1("Fit Impulse", "[0]exp (-[1]*x)", 0, 10);
+  TF1 *fitImpulse = new TF1("Fit Impulse", "[0]* exp (-[1]*x)", 0, 10);
   fitImpulse->SetParameters(1., 1.);
   hImpulse->Fit(fitImpulse, "APE");
   std::cout << ""; /*siamo arrivati qui*/
-  hDiff1->Add(hInvMassDis, hInvMassCon, 1, -1);
-  hDiff2->Add(hInvMassConPiK, hInvMassDisPiK, 1,
-              -1);  // visualizzare i grafici(correlato al write del main)
-
-  TF1 *fitKStar = new TF1("fitKStar", "gaus", 0, 10);
-  hDiff1->Fit(fitKStar, "APE");
 
   Entries = hTransverseImpulse->GetEntries();
   if (hTransverseImpulse && hTransverseImpulse->GetEntries() == 1E5)
