@@ -30,9 +30,9 @@ int main() {
 
   TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 7);
   h1->Sumw2();
-  TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, 2 * TMath::Pi());
+  TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, TMath::Pi());
   h2->Sumw2();
-  TH1F *h3 = new TH1F("h3", "Azimuthal angles", 1E3, 0, TMath::Pi());
+  TH1F *h3 = new TH1F("h3", "Azimuthal angles", 1E3, 0, 2 * TMath::Pi());
   h3->Sumw2();
   TH1F *h4 = new TH1F("h4", "Impulse", 1E4, 0, 10);
   h4->Sumw2();
@@ -65,8 +65,8 @@ int main() {
   for (int i = 0; i < 1E5; ++i) {
     firstempty = 100;
     for (Int_t j = 0; j < 100; ++j) {
-      phi = gRandom->Uniform(0., 2 * TMath::Pi());
       theta = gRandom->Uniform(0., TMath::Pi());
+      phi = gRandom->Uniform(0., 2 * TMath::Pi());
       p = gRandom->Exp(1.);
       EventParticles[j].SetP(p * sin(theta) * cos(phi),
                              p * sin(theta) * sin(phi), p * cos(theta));
@@ -152,6 +152,7 @@ int main() {
   h10->Write();
   h11->Write();
   h12->Write();
+  h13->Write();
   outputFile->Close();
 
   std::cout << "Fino a qui tutto bene" << std::endl;

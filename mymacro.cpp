@@ -1,4 +1,5 @@
 #include <TApplication.h>
+#include <TBrowser.h>
 #include <TCanvas.h>
 #include <TF1.h>
 #include <TFile.h>
@@ -6,7 +7,7 @@
 #include <TMath.h>
 #include <TROOT.h>
 #include <TRandom.h>
-#include <TBrowser.h>
+
 #include "particle.hpp"
 
 void mymacro() {
@@ -35,7 +36,7 @@ void mymacro() {
 
   int Entries;
   Entries = hParticleTypes->GetEntries();
-  if (hParticleTypes && Entries == 1E5)
+  if (hParticleTypes && Entries == 1E7)
     std::cout << "Ok, hParticle has " << Entries << " entries; " << std::endl;
   else
     std::cout << "Something with hParticle is wrong " << std::endl;
@@ -51,8 +52,9 @@ void mymacro() {
               << " ] has a standard normal variable: z = " << z << std::endl;*/
     double expectedContent = expectedProportions[bin - 1] * Entries;
     double z = (content - expectedContent) / error;
-    std::cout << "Bin[ " << bin
-              << " ] has "<< content <<" entries and a standard normal variable: z = " << z << std::endl;
+    std::cout << "Bin[" << bin << "] has " << content
+              << " entries and a standard normal variable: z = " << z
+              << std::endl;
   }
 
   double chisquare;
@@ -61,13 +63,13 @@ void mymacro() {
 
   Entries = hPolarAngles->GetEntries();
   NBins = hPolarAngles->GetNbinsX();
-  if (hPolarAngles && hPolarAngles->GetEntries() == 1E5)
+  if (hPolarAngles && hPolarAngles->GetEntries() == 1E7)
     std::cout << "Ok, hPolarAngles has " << hPolarAngles->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hPolarAngles is wrong " << std::endl;
 
-  TF1 *fitPolar = new TF1("Fit Polar Angles", "[0]", 0, 2 * TMath::Pi());
+  TF1 *fitPolar = new TF1("Fit Polar Angles", "[0]", 0, TMath::Pi());
   fitPolar->SetParameter(0, Entries / NBins);
   hPolarAngles->Fit(fitPolar, "APE");
   chisquare = fitPolar->GetChisquare();
@@ -85,13 +87,14 @@ void mymacro() {
 
   Entries = hAzimuthalAngles->GetEntries();
   NBins = hAzimuthalAngles->GetNbinsX();
-  if (hAzimuthalAngles && hAzimuthalAngles->GetEntries() == 1E5)
+  if (hAzimuthalAngles && hAzimuthalAngles->GetEntries() == 1E7)
     std::cout << "Ok, hAzimuthalAngles has " << hAzimuthalAngles->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hAzimuthalAngles is wrong " << std::endl;
 
-  TF1 *fitAzhimutal = new TF1("Fit Azhimutal Angles", "[0]", 0, TMath::Pi());
+  TF1 *fitAzhimutal =
+      new TF1("Fit Azhimutal Angles", "[0]", 0, 2 * TMath::Pi());
   fitAzhimutal->SetParameter(0, Entries / NBins);
   hAzimuthalAngles->Fit(fitAzhimutal, "APE");
   chisquare = fitPolar->GetChisquare();
@@ -109,7 +112,7 @@ void mymacro() {
               << chisquare << " is: " << probFit << std::endl;
 
   Entries = hImpulse->GetEntries();
-  if (hImpulse && hImpulse->GetEntries() == 1E5)
+  if (hImpulse && hImpulse->GetEntries() == 1E7)
     std::cout << "Ok, hImpulse has " << hImpulse->GetEntries() << " entries; "
               << std::endl;
   else
@@ -121,71 +124,70 @@ void mymacro() {
   std::cout << ""; /*siamo arrivati qui*/
 
   Entries = hTransverseImpulse->GetEntries();
-  if (hTransverseImpulse && hTransverseImpulse->GetEntries() == 1E5)
+  if (hTransverseImpulse && hTransverseImpulse->GetEntries() == 1E7)
     std::cout << "Ok, hTransverseImpulse has "
               << hTransverseImpulse->GetEntries() << " entries; " << std::endl;
   else
     std::cout << "Something with hTransverseImpulse is wrong " << std::endl;
 
   Entries = hEnergy->GetEntries();
-  if (hEnergy && hEnergy->GetEntries() == 1E5)
+  if (hEnergy && hEnergy->GetEntries() == 1E7)
     std::cout << "Ok, hEnergy has " << hTransverseImpulse->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hEnergy is wrong " << std::endl;
 
   Entries = hInvMassAll->GetEntries();
-  if (hInvMassAll && hInvMassAll->GetEntries() == 1E5)
+  if (hInvMassAll)
     std::cout << "Ok, hInvMassAll has " << hInvMassAll->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hInvMassAll is wrong " << std::endl;
-  if (hInvMassCon && hInvMassCon->GetEntries() == 1E5)
+  if (hInvMassCon)
     std::cout << "Ok, hInvMassCon has " << hInvMassCon->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hInvMassCon is wrong " << std::endl;
-  if (hInvMassDis && hInvMassDis->GetEntries() == 1E5)
+  if (hInvMassDis)
     std::cout << "Ok, hInvMassDis has " << hInvMassDis->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hInvMassDis is wrong " << std::endl;
-  if (hInvMassConPiK && hInvMassConPiK->GetEntries() == 1E5)
+  if (hInvMassConPiK)
     std::cout << "Ok, hInvMassConPiK has " << hInvMassConPiK->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hInvMassConPiK is wrong " << std::endl;
-  if (hInvMassDisPiK && hInvMassDisPiK->GetEntries() == 1E5)
+  if (hInvMassDisPiK)
     std::cout << "Ok, hInvMassDisPiK has " << hInvMassDisPiK->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hInvMassDisPiK is wrong " << std::endl;
-  if (hBenchmark && hBenchmark->GetEntries() == 1E5)
+  if (hBenchmark)
     std::cout << "Ok, hBenchmark has " << hBenchmark->GetEntries()
               << " entries; " << std::endl;
   else
     std::cout << "Something with hBenchmark is wrong " << std::endl;
-  if (hKStar && hKStar->GetEntries() == 1E5)
+  if (hKStar)
     std::cout << "Ok, hKStar has " << hKStar->GetEntries() << " entries; "
               << std::endl;
   else
     std::cout << "Something with hKStar is wrong " << std::endl;
 
   hDiff1->Add(hInvMassDis, hInvMassCon, 1, -1);
-  hDiff2->Add(hInvMassConPiK, hInvMassDisPiK, 1,
-              -1);  // visualizzare i grafici(correlato al write del main)
+  hDiff2->Add(hInvMassConPiK, hInvMassDisPiK, 1, -1);
 
-  TF1 *fitKStar = new TF1("fitKStar", "gaus", 0, 10);
-  hDiff1->Fit(fitKStar, "APE");
-  double extractedMass1 = fitKStar->GetParameter(1);
-  double extractedWidth1 = fitKStar->GetParameter(2);
+  TF1 *fitKStar1 = new TF1("fitKStar1", "gaus", 0, 10);
+  hDiff1->Fit(fitKStar1, "APE");
+  double extractedMass1 = fitKStar1->GetParameter(1);
+  double extractedWidth1 = fitKStar1->GetParameter(2);
 
   std::cout << "Massa del K* estratta da hDiff1: " << extractedMass1
             << std::endl;
   std::cout << "Larghezza del K* estratta da hDiff1: " << extractedWidth1
             << std::endl;
   std::cout << "Chi square/ NDF of hDiff1: "
-            << fitKStar->GetChisquare() / fitKStar->GetNDF() << std::endl;
+            << fitKStar1->GetChisquare() / fitKStar1->GetNDF() << std::endl;
   std::cout << "the probability";  // vediamo da come abbiamo fatto prima
 
   TF1 *fitKStar2 = new TF1("fitKStar2", "gaus", 0, 10);
@@ -358,14 +360,13 @@ void mymacro() {
 
   TCanvas *c13 = new TCanvas("c13", "Canvas for hKStar", 800, 600);
   hKStar->Draw();
-  fitKStar->Draw("same");
   c13->SaveAs("hKStar.pdf");
   c13->SaveAs("hKStar.C");
   c13->SaveAs("hKStar.root");
 
   TCanvas *c14 = new TCanvas("c14", "Canvas for hDiff1", 800, 600);
   hDiff1->Draw();
-  fitKStar->Draw("same");
+  fitKStar1->Draw("same");
   c14->SaveAs("hDiff1.pdf");
   c14->SaveAs("hDiff1.C");
   c14->SaveAs("hDiff1.root");
