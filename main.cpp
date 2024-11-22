@@ -28,6 +28,8 @@ int main() {
   int firstempty;
   double PiK = 0.13957 + 0.49367;
 
+  Int_t BINS = 1E3;
+
   TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 7);
   h1->Sumw2();
   TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, TMath::Pi());
@@ -43,23 +45,22 @@ int main() {
   TH1F *h7 = new TH1F("h7", "Invariant mass between all particles", 1E5, 0, 10);
   h7->Sumw2();
   TH1F *h8 = new TH1F(
-      "h8", "Invariant mass between concordant charge particles", 1E5, 0, 10);
+      "h8", "Invariant mass between concordant charge particles", BINS, 0, 7);
   h8->Sumw2();
-  TH1F *h9 =
-      new TH1F("h9", "Invariant mass between disconcordant charge particles",
-               1E5, 0, 10);
+  TH1F *h9 = new TH1F(
+      "h9", "Invariant mass between disconcordant charge particles", BINS, 0, 7);
   h9->Sumw2();
   TH1F *h10 = new TH1F(
-      "h10", "Invariant mass between concordant charge Pi and K particles", 1E5,
-      0, 10);
+      "h10", "Invariant mass between concordant charge Pi and K particles", BINS,
+      0, 7);
   h10->Sumw2();
   TH1F *h11 = new TH1F(
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
-      1E5, 0, 10);
+      BINS, 0, 7);
   h11->Sumw2();
-  TH1F *h12 = new TH1F("h12", "Benchmark", 1E5, 0, 10);
+  TH1F *h12 = new TH1F("h12", "Benchmark", BINS, 0, 7);
   h12->Sumw2();
-  TH1F *h13 = new TH1F("h13", "K*", 1E5, 0, 10);
+  TH1F *h13 = new TH1F("h13", "K*", BINS, 0, 7);
   h13->Sumw2();
 
   for (int i = 0; i < 1E5; ++i) {
@@ -120,7 +121,8 @@ int main() {
             Double_t c = EventParticles[a].InvMass(EventParticles[b]);
             h7->Fill(c);
             if (((EventParticles[a].GetIndex() + EventParticles[b].GetIndex()) %
-                 2) == 0) {
+                    2) ==
+                0) {
               h8->Fill(c);
               if (EventParticles[a].GetMass() + EventParticles[b].GetMass() ==
                   PiK)
@@ -136,7 +138,7 @@ int main() {
       }
     }
   }
-  h13->Add(h11, h10, 1, -1);
+  h13->Add(h9, h8, 1, -1);
 
   std::cout << h12->GetMean() << '\t' << h12->GetRMS() << std::endl;
   TFile *outputFile = new TFile("histograms.root", "RECREATE");

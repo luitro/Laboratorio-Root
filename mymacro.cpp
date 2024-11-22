@@ -4,13 +4,24 @@
 #include <TF1.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TLine.h>
 #include <TMath.h>
 #include <TROOT.h>
 #include <TRandom.h>
 
 #include "particle.hpp"
 
+// Gaussiana 1-D definita nella funzione utente
+Double_t Gauss(Double_t *x, Double_t *par) {
+  Double_t xx = x[0];
+  Double_t val = par[0] * TMath::Exp(-(xx - par[1]) * (xx - par[1]) / 2. /
+                                     par[2] / par[2]);
+  return val;
+}
+
 void mymacro() {
+  Int_t BINS = 1E3;
+
   TFile *file = new TFile("histograms.root");
   TH1F *hParticleTypes = (TH1F *)file->Get("h1");
   TH1F *hPolarAngles = (TH1F *)file->Get("h2");
@@ -25,8 +36,11 @@ void mymacro() {
   TH1F *hInvMassDisPiK = (TH1F *)file->Get("h11");
   TH1F *hBenchmark = (TH1F *)file->Get("h12");
   TH1F *hKStar = (TH1F *)file->Get("h13");
-  TH1F *hDiff1 = new TH1F("hDiff1", "Diff1", 1E5, 0, 10);
-  TH1F *hDiff2 = new TH1F("hDiff2", "Diff2", 1E5, 0, 10);
+  TH1F *hDiff1 = new TH1F("hDiff1", "Diff1", BINS, 0, 7);
+  hDiff1->Sumw2();
+  TH1F *hDiff2 = new TH1F("hDiff2", "Diff2", BINS, 0, 7);
+  hDiff2->Sumw2();
+
   int NBins;
 
   double expectedProportions[] = {
@@ -54,7 +68,7 @@ void mymacro() {
     double z = (content - expectedContent) / error;
     std::cout << "Bin[" << bin << "] has " << content
               << " entries and a standard normal variable: z = " << z
-              << std::endl;
+              << "\nContent: " << content << " +/- " << error << std::endl;
   }
 
   double chisquare;
@@ -100,8 +114,8 @@ void mymacro() {
   chisquare = fitPolar->GetChisquare();
   NDF = fitAzhimutal->GetNDF();
   probFit = fitAzhimutal->GetProb();
-  std::cout << "Fit parameter: " << fitAzhimutal->GetParameter(0);
-  std::cout << "chiSquare/NDf= " << chisquare / NDF << std::endl;
+  std::cout << "Fit parameter: " << fitAzhimutal->GetParameter(0) << std::endl;
+  std::cout << "chiSquare/NDf = " << chisquare / NDF << std::endl;
   if (probFit > 0.05)
     std::cout << "The observed distribution is consistent with the expected "
                  "one.\nThe probability to get a higher chi square than "
@@ -118,10 +132,22 @@ void mymacro() {
   else
     std::cout << "Something with hImpulse is wrong " << std::endl;
 
-  TF1 *fitImpulse = new TF1("Fit Impulse", "[0]* exp (-[1]*x)", 0, 10);
-  fitImpulse->SetParameters(1., 1.);
+  TF1 *fitImpulse = new TF1("Fit Impulse", "expo", 0, 10);
   hImpulse->Fit(fitImpulse, "APE");
-  std::cout << ""; /*siamo arrivati qui*/
+  chisquare = fitImpulse->GetChisquare();
+  NDF = fitImpulse->GetNDF();
+  probFit = fitImpulse->GetProb();
+  std::cout << "Fit parameter: [0] = " << fitImpulse->GetParameter(0)
+            << "; [1] = " << fitImpulse->GetParameter(1) << std::endl;
+  std::cout << "chiSquare/NDf = " << chisquare / NDF << std::endl;
+  if (probFit > 0.05)
+    std::cout << "The observed distribution is consistent with the expected "
+                 "one.\nThe probability to get a higher chi square than "
+              << chisquare << " is: " << probFit << std::endl;
+  else
+    std::cout << "The observed distribution is inconsistent with the expected "
+                 "one.\nThe probability to get a higher chi square than "
+              << chisquare << " is: " << probFit << std::endl;
 
   Entries = hTransverseImpulse->GetEntries();
   if (hTransverseImpulse && hTransverseImpulse->GetEntries() == 1E7)
@@ -175,24 +201,28 @@ void mymacro() {
     std::cout << "Something with hKStar is wrong " << std::endl;
 
   hDiff1->Add(hInvMassDis, hInvMassCon, 1, -1);
-  hDiff2->Add(hInvMassConPiK, hInvMassDisPiK, 1, -1);
+  hDiff2->Add(hInvMassDisPiK, hInvMassConPiK, 1, -1);
 
-  TF1 *fitKStar1 = new TF1("fitKStar1", "gaus", 0, 10);
-  hDiff1->Fit(fitKStar1, "APE");
+  TF1 *fitKStar1 = new TF1("fitKStar1", Gauss, 0, 7, 3);
+  fitKStar1->SetParameters(hDiff1->GetMaximum(), 0.89166, 0.05);
+  hDiff1->Fit(fitKStar1);
   double extractedMass1 = fitKStar1->GetParameter(1);
+  double MasseError1 = fitKStar1->GetParError(1);
   double extractedWidth1 = fitKStar1->GetParameter(2);
+  double WidthError1 = fitKStar1->GetParError(2);
 
-  std::cout << "Massa del K* estratta da hDiff1: " << extractedMass1
-            << std::endl;
+  std::cout << "Massa del K* estratta da hDiff1: " << extractedMass1 << " +/- "
+            << MasseError1 << std::endl;
   std::cout << "Larghezza del K* estratta da hDiff1: " << extractedWidth1
-            << std::endl;
+            << " +/- " << WidthError1 << std::endl;
   std::cout << "Chi square/ NDF of hDiff1: "
             << fitKStar1->GetChisquare() / fitKStar1->GetNDF() << std::endl;
   std::cout << "the probability";  // vediamo da come abbiamo fatto prima
 
-  TF1 *fitKStar2 = new TF1("fitKStar2", "gaus", 0, 10);
 
-  hDiff2->Fit(fitKStar2, "APE");
+  TF1 *fitKStar2 = new TF1("fitKStar2", Gauss, 0, 7, 3);
+  fitKStar2->SetParameters(hDiff2->GetMaximum(), 0.89166, 0.05);
+  hDiff2->Fit(fitKStar2);
   double extractedMass2 = fitKStar2->GetParameter(1);
   double extractedWidth2 = fitKStar2->GetParameter(2);
 
@@ -208,13 +238,14 @@ void mymacro() {
 
   hParticleTypes->GetXaxis()->SetTitle("Particle Types");
   hParticleTypes->GetYaxis()->SetTitle("Counts");
-  hParticleTypes->SetLineColor(kBlue);
+  hParticleTypes->SetFillColor(kBlue);
   hParticleTypes->SetLineWidth(2);
 
   hPolarAngles->GetXaxis()->SetTitle("Polar Angle (rad)");
   hPolarAngles->GetYaxis()->SetTitle("Counts");
   hPolarAngles->SetLineColor(kBlue);
   hPolarAngles->SetLineWidth(2);
+  hPolarAngles->GetYaxis()->SetRangeUser(9000, 11000);
 
   hAzimuthalAngles->GetXaxis()->SetTitle("Azimuthal Angle (rad)");
   hAzimuthalAngles->GetYaxis()->SetTitle("Counts");
@@ -249,7 +280,8 @@ void mymacro() {
   hInvMassDis->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassDis->GetYaxis()->SetTitle("Counts");
   hInvMassDis->SetLineColor(kBlue);
-  hInvMassDis->SetLineWidth(2);
+  hInvMassDis->SetLineWidth(0);
+  hInvMassDis->SetFillColor(kBlue);
 
   hInvMassConPiK->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassConPiK->GetYaxis()->SetTitle("Counts");
@@ -283,8 +315,10 @@ void mymacro() {
   hDiff2->SetLineWidth(2);
 
   // Set vertical scale (if needed for clarity)
-  hDiff1->GetYaxis()->SetRangeUser(0, hDiff1->GetMaximum() * 1.2);
-  hDiff2->GetYaxis()->SetRangeUser(0, hDiff2->GetMaximum() * 1.2);
+  // hDiff1->GetYaxis()->SetRangeUser(hDiff1->GetMinimum() * 1.2,
+  // hDiff1->GetMaximum() * 1.2);
+  // hDiff2->GetYaxis()->SetRangeUser(hDiff2->GetMinimum() * 1.2,
+  // hDiff2->GetMaximum() * 1.2);
 
   TCanvas *c1 = new TCanvas("c1", "Canvas for hParticleTypes", 800, 600);
   hParticleTypes->Draw();
@@ -318,6 +352,31 @@ void mymacro() {
 
   TCanvas *c6 = new TCanvas("c6", "Canvas for hEnergy", 800, 600);
   hEnergy->Draw();
+
+  TLine *line1 = new TLine(0.13957, 0, 0.13957,
+                           1E5);  // Disegna la retta verticale a x = 3
+  line1->SetLineColor(kRed);      // Imposta il colore della linea
+  line1->SetLineWidth(2);         // Imposta lo spessore della linea
+  line1->Draw();
+
+  TLine *line2 = new TLine(0.49367, 0, 0.49367,
+                           1E5);  // Disegna la retta verticale a x = 3
+  line2->SetLineColor(kRed);      // Imposta il colore della linea
+  line2->SetLineWidth(2);         // Imposta lo spessore della linea
+  line2->Draw();
+
+  TLine *line3 = new TLine(0.93827, 0, 0.93827,
+                           1E5);  // Disegna la retta verticale a x = 3
+  line3->SetLineColor(kRed);      // Imposta il colore della linea
+  line3->SetLineWidth(2);         // Imposta lo spessore della linea
+  line3->Draw();
+
+  TLine *line4 = new TLine(0.89166, 0, 0.89166,
+                           1E5);  // Disegna la retta verticale a x = 3
+  line4->SetLineColor(kRed);      // Imposta il colore della linea
+  line4->SetLineWidth(2);         // Imposta lo spessore della linea
+  line4->Draw();
+
   c6->SaveAs("hEnergy.pdf");
   c6->SaveAs("hEnergy.C");
   c6->SaveAs("hEnergy.root");
@@ -366,7 +425,7 @@ void mymacro() {
 
   TCanvas *c14 = new TCanvas("c14", "Canvas for hDiff1", 800, 600);
   hDiff1->Draw();
-  fitKStar1->Draw("same");
+  //fitKStar1->Draw("same");
   c14->SaveAs("hDiff1.pdf");
   c14->SaveAs("hDiff1.C");
   c14->SaveAs("hDiff1.root");
@@ -377,6 +436,14 @@ void mymacro() {
   c15->SaveAs("hDiff2.pdf");
   c15->SaveAs("hDiff2.C");
   c15->SaveAs("hDiff2.root");
+
+  TCanvas *c16 = new TCanvas("c16", "Cosa succede", 800, 600);
+  hInvMassDisPiK->Draw();
+  hInvMassConPiK->Draw("SAME");
+  c16->Update();
+  c16->SaveAs("Cosa.pdf");
+  c16->SaveAs("Cosa.C");
+  c16->SaveAs("Cosa.root");
 
   TBrowser *browser = new TBrowser();
 }
