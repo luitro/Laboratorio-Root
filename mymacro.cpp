@@ -8,10 +8,11 @@
 #include <TMath.h>
 #include <TROOT.h>
 #include <TRandom.h>
+#include <TStyle.h>
 
 #include "particle.hpp"
 
-// Gaussiana 1-D definita nella funzione utente
+//
 Double_t Gauss(Double_t *x, Double_t *par) {
   Double_t xx = x[0];
   Double_t val = par[0] * TMath::Exp(-(xx - par[1]) * (xx - par[1]) / 2. /
@@ -43,9 +44,7 @@ void mymacro() {
 
   int NBins;
 
-  double expectedProportions[] = {
-      0.4,   0.4,   0.05, 0.05,
-      0.045, 0.045, 0.01};  // Proporzioni attese per 3 tipi di particelle
+  double expectedProportions[] = {0.4, 0.4, 0.05, 0.05, 0.045, 0.045, 0.01};
   int nTypes = 7;
 
   int Entries;
@@ -59,16 +58,10 @@ void mymacro() {
   for (int bin = 1; bin <= NBins; ++bin) {
     double content = hParticleTypes->GetBinContent(bin);
     double error = hParticleTypes->GetBinError(bin);
-    /*double observedProportion = content / Entries;
-    double expectedProportion = expectedProportions[bin - 1];
-    double z = (observedProportion - expectedProportion) / (error / Entries);
-    std::cout << "Bin[ " << bin
-              << " ] has a standard normal variable: z = " << z << std::endl;*/
     double expectedContent = expectedProportions[bin - 1] * Entries;
     double z = (content - expectedContent) / error;
-    std::cout << "Bin[" << bin << "] has " << content
-              << " entries and a standard normal variable: z = " << z
-              << "\nContent: " << content << " +/- " << error << std::endl;
+    std::cout << "Bin[" << bin << "] has " << content << " +/- " << error
+              << " entries; the standard score z:\nz = " << z << std::endl;
   }
 
   double chisquare;
@@ -217,12 +210,13 @@ void mymacro() {
             << " +/- " << WidthError1 << std::endl;
   std::cout << "Chi square/ NDF of hDiff1: "
             << fitKStar1->GetChisquare() / fitKStar1->GetNDF() << std::endl;
-  std::cout << "the probability";  // vediamo da come abbiamo fatto prima
-
+  std::cout << "the probability"
+            << std::endl;  // vediamo da come abbiamo fatto prima
+  std::cout << "The maximum content is: " << hDiff1->GetMaximum() << std::endl;
 
   TF1 *fitKStar2 = new TF1("fitKStar2", Gauss, 0, 7, 3);
   fitKStar2->SetParameters(hDiff2->GetMaximum(), 0.89166, 0.05);
-  hDiff2->Fit(fitKStar2);
+  hDiff2->Fit(fitKStar2, "S");
   double extractedMass2 = fitKStar2->GetParameter(1);
   double extractedWidth2 = fitKStar2->GetParameter(2);
 
@@ -239,18 +233,27 @@ void mymacro() {
   hParticleTypes->GetXaxis()->SetTitle("Particle Types");
   hParticleTypes->GetYaxis()->SetTitle("Counts");
   hParticleTypes->SetFillColor(kBlue);
-  hParticleTypes->SetLineWidth(2);
+  hParticleTypes->SetLineWidth(0);
+  hParticleTypes->SetMarkerSize(0);
+  hParticleTypes->GetXaxis()->SetBinLabel(1, "Pi+");
+  hParticleTypes->GetXaxis()->SetBinLabel(2, "Pi-");
+  hParticleTypes->GetXaxis()->SetBinLabel(3, "K+");
+  hParticleTypes->GetXaxis()->SetBinLabel(4, "K-");
+  hParticleTypes->GetXaxis()->SetBinLabel(5, "P+");
+  hParticleTypes->GetXaxis()->SetBinLabel(6, "P-");
+  hParticleTypes->GetXaxis()->SetBinLabel(7, "K*");
 
   hPolarAngles->GetXaxis()->SetTitle("Polar Angle (rad)");
   hPolarAngles->GetYaxis()->SetTitle("Counts");
   hPolarAngles->SetLineColor(kBlue);
   hPolarAngles->SetLineWidth(2);
-  hPolarAngles->GetYaxis()->SetRangeUser(9000, 11000);
+  hPolarAngles->GetYaxis()->SetRangeUser(5000, 11000);
 
   hAzimuthalAngles->GetXaxis()->SetTitle("Azimuthal Angle (rad)");
   hAzimuthalAngles->GetYaxis()->SetTitle("Counts");
   hAzimuthalAngles->SetLineColor(kBlue);
   hAzimuthalAngles->SetLineWidth(2);
+  hAzimuthalAngles->GetYaxis()->SetRangeUser(5000, 11000);
 
   hImpulse->GetXaxis()->SetTitle("Impulse (GeV/c)");
   hImpulse->GetYaxis()->SetTitle("Counts");
@@ -280,8 +283,7 @@ void mymacro() {
   hInvMassDis->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassDis->GetYaxis()->SetTitle("Counts");
   hInvMassDis->SetLineColor(kBlue);
-  hInvMassDis->SetLineWidth(0);
-  hInvMassDis->SetFillColor(kBlue);
+  hInvMassDis->SetLineWidth(2);
 
   hInvMassConPiK->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassConPiK->GetYaxis()->SetTitle("Counts");
@@ -308,142 +310,111 @@ void mymacro() {
   hDiff1->GetYaxis()->SetTitle("Counts");
   hDiff1->SetLineColor(kBlue);
   hDiff1->SetLineWidth(2);
+  fitKStar1->SetLineColor(kRed);
+  fitKStar1->SetLineWidth(4);
 
   hDiff2->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff2->GetYaxis()->SetTitle("Counts");
   hDiff2->SetLineColor(kBlue);
   hDiff2->SetLineWidth(2);
 
-  // Set vertical scale (if needed for clarity)
-  // hDiff1->GetYaxis()->SetRangeUser(hDiff1->GetMinimum() * 1.2,
-  // hDiff1->GetMaximum() * 1.2);
-  // hDiff2->GetYaxis()->SetRangeUser(hDiff2->GetMinimum() * 1.2,
-  // hDiff2->GetMaximum() * 1.2);
-
   TCanvas *c1 = new TCanvas("c1", "Canvas for hParticleTypes", 800, 600);
-  hParticleTypes->Draw();
+  gStyle->SetOptStat(11);
+  hParticleTypes->Draw("BAR2");
   c1->SaveAs("hParticleTypes.pdf");
   c1->SaveAs("hParticleTypes.C");
   c1->SaveAs("hParticleTypes.root");
 
   TCanvas *c2 = new TCanvas("c2", "Canvas for hPolarAngles", 800, 600);
-  hPolarAngles->Draw();
+  gStyle->SetOptFit(1111);
+  hPolarAngles->Draw("HIST");
+  fitPolar->Draw("SAME");
   c2->SaveAs("hPolarAngles.pdf");
   c2->SaveAs("hPolarAngles.C");
   c2->SaveAs("hPolarAngles.root");
 
   TCanvas *c3 = new TCanvas("c3", "Canvas for hAzimuthalAngles", 800, 600);
-  hAzimuthalAngles->Draw();
+  hAzimuthalAngles->Draw("HIST");
+  fitAzhimutal->Draw("SAME");
   c3->SaveAs("hAzimuthalAngles.pdf");
   c3->SaveAs("hAzimuthalAngles.C");
   c3->SaveAs("hAzimuthalAngles.root");
 
   TCanvas *c4 = new TCanvas("c4", "Canvas for hImpulse", 800, 600);
-  hImpulse->Draw();
+  hImpulse->Draw("HIST");
   c4->SaveAs("hImpulse.pdf");
   c4->SaveAs("hImpulse.C");
   c4->SaveAs("hImpulse.root");
 
   TCanvas *c5 = new TCanvas("c5", "Canvas for hTransverseImpulse", 800, 600);
-  hTransverseImpulse->Draw();
+  gStyle->SetOptFit(0000);
+  hTransverseImpulse->Draw("HIST");
   c5->SaveAs("hTransverseImpulse.pdf");
   c5->SaveAs("hTransverseImpulse.C");
   c5->SaveAs("hTransverseImpulse.root");
 
   TCanvas *c6 = new TCanvas("c6", "Canvas for hEnergy", 800, 600);
-  hEnergy->Draw();
-
-  TLine *line1 = new TLine(0.13957, 0, 0.13957,
-                           1E5);  // Disegna la retta verticale a x = 3
-  line1->SetLineColor(kRed);      // Imposta il colore della linea
-  line1->SetLineWidth(2);         // Imposta lo spessore della linea
-  line1->Draw();
-
-  TLine *line2 = new TLine(0.49367, 0, 0.49367,
-                           1E5);  // Disegna la retta verticale a x = 3
-  line2->SetLineColor(kRed);      // Imposta il colore della linea
-  line2->SetLineWidth(2);         // Imposta lo spessore della linea
-  line2->Draw();
-
-  TLine *line3 = new TLine(0.93827, 0, 0.93827,
-                           1E5);  // Disegna la retta verticale a x = 3
-  line3->SetLineColor(kRed);      // Imposta il colore della linea
-  line3->SetLineWidth(2);         // Imposta lo spessore della linea
-  line3->Draw();
-
-  TLine *line4 = new TLine(0.89166, 0, 0.89166,
-                           1E5);  // Disegna la retta verticale a x = 3
-  line4->SetLineColor(kRed);      // Imposta il colore della linea
-  line4->SetLineWidth(2);         // Imposta lo spessore della linea
-  line4->Draw();
-
+  hEnergy->Draw("HIST");
   c6->SaveAs("hEnergy.pdf");
   c6->SaveAs("hEnergy.C");
   c6->SaveAs("hEnergy.root");
 
   TCanvas *c7 = new TCanvas("c7", "Canvas for hInvMassAll", 800, 600);
-  hInvMassAll->Draw();
+  hInvMassAll->Draw("HIST");
   c7->SaveAs("hInvMassAll.pdf");
   c7->SaveAs("hInvMassAll.C");
   c7->SaveAs("hInvMassAll.root");
 
   TCanvas *c8 = new TCanvas("c8", "Canvas for hInvMassCon", 800, 600);
-  hInvMassCon->Draw();
+  hInvMassCon->Draw("HIST");
   c8->SaveAs("hInvMassCon.pdf");
   c8->SaveAs("hInvMassCon.C");
   c8->SaveAs("hInvMassCon.root");
 
   TCanvas *c9 = new TCanvas("c9", "Canvas for hInvMassDis", 800, 600);
-  hInvMassDis->Draw();
+  hInvMassDis->Draw("HIST");
   c9->SaveAs("hInvMassDis.pdf");
   c9->SaveAs("hInvMassDis.C");
   c9->SaveAs("hInvMassDis.root");
 
   TCanvas *c10 = new TCanvas("c10", "Canvas for hInvMassConPiK", 800, 600);
-  hInvMassConPiK->Draw();
+  hInvMassConPiK->Draw("HIST");
   c10->SaveAs("hInvMassConPiK.pdf");
   c10->SaveAs("hInvMassConPiK.C");
   c10->SaveAs("hInvMassConPiK.root");
 
   TCanvas *c11 = new TCanvas("c11", "Canvas for hInvMassDisPiK", 800, 600);
-  hInvMassDisPiK->Draw();
+  hInvMassDisPiK->Draw("HIST");
   c11->SaveAs("hInvMassDisPiK.pdf");
   c11->SaveAs("hInvMassDisPiK.C");
   c11->SaveAs("hInvMassDisPiK.root");
 
   TCanvas *c12 = new TCanvas("c12", "Canvas for hBenchmark", 800, 600);
-  hBenchmark->Draw();
+  hBenchmark->Draw("HIST");
   c12->SaveAs("hBenchmark.pdf");
   c12->SaveAs("hBenchmark.C");
   c12->SaveAs("hBenchmark.root");
 
   TCanvas *c13 = new TCanvas("c13", "Canvas for hKStar", 800, 600);
-  hKStar->Draw();
+  hKStar->Draw("HIST");
   c13->SaveAs("hKStar.pdf");
   c13->SaveAs("hKStar.C");
   c13->SaveAs("hKStar.root");
 
   TCanvas *c14 = new TCanvas("c14", "Canvas for hDiff1", 800, 600);
-  hDiff1->Draw();
-  //fitKStar1->Draw("same");
+  gStyle->SetOptFit(1111);
+  hDiff1->Draw("HIST");
+  fitKStar1->Draw("SAME");
   c14->SaveAs("hDiff1.pdf");
   c14->SaveAs("hDiff1.C");
   c14->SaveAs("hDiff1.root");
 
   TCanvas *c15 = new TCanvas("c15", "Canvas for hDiff2", 800, 600);
-  hDiff2->Draw();
-  fitKStar2->Draw("same");
+  hDiff2->Draw("HIST");
+  fitKStar2->Draw("SAME");
   c15->SaveAs("hDiff2.pdf");
   c15->SaveAs("hDiff2.C");
   c15->SaveAs("hDiff2.root");
-
-  TCanvas *c16 = new TCanvas("c16", "Cosa succede", 800, 600);
-  hInvMassDisPiK->Draw();
-  hInvMassConPiK->Draw("SAME");
-  c16->Update();
-  c16->SaveAs("Cosa.pdf");
-  c16->SaveAs("Cosa.C");
-  c16->SaveAs("Cosa.root");
 
   TBrowser *browser = new TBrowser();
 }

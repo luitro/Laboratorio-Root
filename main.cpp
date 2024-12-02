@@ -9,6 +9,7 @@
 #include "particle.hpp"
 
 int main() {
+  // Create the static table with all the particles type
   Particle::AddParticleType("Pi+", 0.13957, 1, 0);
   Particle::AddParticleType("Pi-", 0.13957, -1, 0);
   Particle::AddParticleType("K+", 0.49367, 1, 0);
@@ -17,6 +18,7 @@ int main() {
   Particle::AddParticleType("P-", 0.93827, -1, 0);
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
 
+  // Set the seed for the 
   gRandom->SetSeed();
 
   int N = 120;
@@ -47,12 +49,13 @@ int main() {
   TH1F *h8 = new TH1F(
       "h8", "Invariant mass between concordant charge particles", BINS, 0, 7);
   h8->Sumw2();
-  TH1F *h9 = new TH1F(
-      "h9", "Invariant mass between disconcordant charge particles", BINS, 0, 7);
+  TH1F *h9 =
+      new TH1F("h9", "Invariant mass between disconcordant charge particles",
+               BINS, 0, 7);
   h9->Sumw2();
   TH1F *h10 = new TH1F(
-      "h10", "Invariant mass between concordant charge Pi and K particles", BINS,
-      0, 7);
+      "h10", "Invariant mass between concordant charge Pi and K particles",
+      BINS, 0, 7);
   h10->Sumw2();
   TH1F *h11 = new TH1F(
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
@@ -121,8 +124,7 @@ int main() {
             Double_t c = EventParticles[a].InvMass(EventParticles[b]);
             h7->Fill(c);
             if (((EventParticles[a].GetIndex() + EventParticles[b].GetIndex()) %
-                    2) ==
-                0) {
+                 2) == 0) {
               h8->Fill(c);
               if (EventParticles[a].GetMass() + EventParticles[b].GetMass() ==
                   PiK)
