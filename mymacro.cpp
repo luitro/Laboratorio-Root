@@ -227,6 +227,11 @@ void mymacro() {
             << fitKStar2->GetChisquare() / fitKStar2->GetNDF() << std::endl;
   std::cout << "the probability";  // vediamo da come abbiamo fatto prima
 
+  TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0, 7, 3);
+  fitBenchmark->SetParameters(hBenchmark->GetMaximum(), 0.8918,
+                              0.05); 
+  hBenchmark->Fit(fitBenchmark, "S");
+
   // zona cosmetica
 
   hParticleTypes->SetName("Particle Types");
@@ -356,13 +361,13 @@ void mymacro() {
   c1->SaveAs("Particles_Properties.C");
   c1->SaveAs("Particles_Properties.root");
 
-
   TCanvas *c2 = new TCanvas("c2", "Invariant mass difference", 1200, 400);
   c2->Divide(3, 1);
   c2->cd(1);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
   hBenchmark->Draw("HIST");
+  fitBenchmark->Draw("SAME");
   c2->cd(2);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
