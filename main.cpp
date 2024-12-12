@@ -63,8 +63,8 @@ int main() {
   h11->Sumw2();
   TH1F *h12 = new TH1F("h12", "Benchmark", BINS, 0, 7);
   h12->Sumw2();
-  TH1F *h13 = new TH1F("h13", "K*", BINS, 0, 7);
-  h13->Sumw2();
+  
+  
 
   for (int i = 0; i < 1E5; ++i) {
     firstempty = 100;
@@ -140,7 +140,7 @@ int main() {
       }
     }
   }
-  h13->Add(h9, h8, 1, -1);
+ 
 
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
   h1->Write();
@@ -155,6 +155,5 @@ int main() {
   h10->Write();
   h11->Write();
   h12->Write();
-  h13->Write();
   outputFile->Close();
 }

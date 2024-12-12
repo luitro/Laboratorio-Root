@@ -36,7 +36,6 @@ void mymacro() {
   TH1F *hInvMassConPiK = (TH1F *)file->Get("h10");
   TH1F *hInvMassDisPiK = (TH1F *)file->Get("h11");
   TH1F *hBenchmark = (TH1F *)file->Get("h12");
-  TH1F *hKStar = (TH1F *)file->Get("h13");
   TH1F *hDiff1 = new TH1F("hDiff1", "Diff1", BINS, 0, 7);
   hDiff1->Sumw2();
   TH1F *hDiff2 = new TH1F("hDiff2", "Diff2", BINS, 0, 7);
@@ -187,11 +186,11 @@ void mymacro() {
               << " entries; " << std::endl;
   else
     std::cout << "Something with hBenchmark is wrong " << std::endl;
-  if (hKStar)
+  /*if (hKStar)
     std::cout << "Ok, hKStar has " << hKStar->GetEntries() << " entries; "
               << std::endl;
   else
-    std::cout << "Something with hKStar is wrong " << std::endl;
+    std::cout << "Something with hKStar is wrong " << std::endl;*/
 
   hDiff1->Add(hInvMassDis, hInvMassCon, 1, -1);
   hDiff2->Add(hInvMassDisPiK, hInvMassConPiK, 1, -1);
@@ -230,6 +229,7 @@ void mymacro() {
 
   // zona cosmetica
 
+  hParticleTypes->SetName("Particle Types");
   hParticleTypes->GetXaxis()->SetTitle("Particle Types");
   hParticleTypes->GetYaxis()->SetTitle("Counts");
   hParticleTypes->SetFillColor(kBlue);
@@ -243,69 +243,78 @@ void mymacro() {
   hParticleTypes->GetXaxis()->SetBinLabel(6, "P-");
   hParticleTypes->GetXaxis()->SetBinLabel(7, "K*");
 
+  hPolarAngles->SetName("Polar angles");
   hPolarAngles->GetXaxis()->SetTitle("Polar Angle (rad)");
   hPolarAngles->GetYaxis()->SetTitle("Counts");
   hPolarAngles->SetLineColor(kBlue);
   hPolarAngles->SetLineWidth(2);
-  hPolarAngles->GetYaxis()->SetRangeUser(5000, 11000);
+  hPolarAngles->GetYaxis()->SetRangeUser(9000, 11000);
 
+  hAzimuthalAngles->SetName("Azimutal angles");
   hAzimuthalAngles->GetXaxis()->SetTitle("Azimuthal Angle (rad)");
   hAzimuthalAngles->GetYaxis()->SetTitle("Counts");
   hAzimuthalAngles->SetLineColor(kBlue);
   hAzimuthalAngles->SetLineWidth(2);
-  hAzimuthalAngles->GetYaxis()->SetRangeUser(5000, 11000);
+  hAzimuthalAngles->GetYaxis()->SetRangeUser(9000, 11000);
 
+  hImpulse->SetName("Impulse");
   hImpulse->GetXaxis()->SetTitle("Impulse (GeV/c)");
   hImpulse->GetYaxis()->SetTitle("Counts");
   hImpulse->SetLineColor(kBlue);
   hImpulse->SetLineWidth(2);
 
+  hTransverseImpulse->SetName("Trasverse impulse");
   hTransverseImpulse->GetXaxis()->SetTitle("Transverse Impulse (GeV/c)");
   hTransverseImpulse->GetYaxis()->SetTitle("Counts");
   hTransverseImpulse->SetLineColor(kBlue);
   hTransverseImpulse->SetLineWidth(2);
 
+  hEnergy->SetName("Energy");
   hEnergy->GetXaxis()->SetTitle("Energy (GeV)");
   hEnergy->GetYaxis()->SetTitle("Counts");
   hEnergy->SetLineColor(kBlue);
   hEnergy->SetLineWidth(2);
 
+  hInvMassAll->SetName("InvMass between all particles");
   hInvMassAll->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassAll->GetYaxis()->SetTitle("Counts");
   hInvMassAll->SetLineColor(kBlue);
   hInvMassAll->SetLineWidth(2);
 
+  hInvMassCon->SetName("InvMass between concordant charge particles");
   hInvMassCon->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassCon->GetYaxis()->SetTitle("Counts");
   hInvMassCon->SetLineColor(kBlue);
   hInvMassCon->SetLineWidth(2);
 
+  hInvMassDis->SetName("InvMass between discordant charge particles");
   hInvMassDis->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassDis->GetYaxis()->SetTitle("Counts");
   hInvMassDis->SetLineColor(kBlue);
   hInvMassDis->SetLineWidth(2);
 
+  hInvMassConPiK->SetName(
+      "InvMass between concordant charge Pi and K particles");
   hInvMassConPiK->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassConPiK->GetYaxis()->SetTitle("Counts");
   hInvMassConPiK->SetLineColor(kBlue);
   hInvMassConPiK->SetLineWidth(2);
 
+  hInvMassDisPiK->SetName(
+      "InvMass between discordant charge Pi and K particles");
   hInvMassDisPiK->GetXaxis()->SetTitle("Invariant Mass (GeV/c^2)");
   hInvMassDisPiK->GetYaxis()->SetTitle("Counts");
   hInvMassDisPiK->SetLineColor(kBlue);
   hInvMassDisPiK->SetLineWidth(2);
 
+  hBenchmark->SetName("Benchmark");
   hBenchmark->GetXaxis()->SetTitle("Benchmark Variable");
   hBenchmark->GetYaxis()->SetTitle("Counts");
   hBenchmark->SetLineColor(kBlue);
   hBenchmark->SetLineWidth(2);
 
-  hKStar->GetXaxis()->SetTitle("K* Mass (GeV/c^2)");
-  hKStar->GetYaxis()->SetTitle("Counts");
-  hKStar->SetLineColor(kBlue);
-  hKStar->SetLineWidth(2);
-
   // Custom range for Diff histograms based on observed data ranges
+  hDiff1->SetName("Diff1");
   hDiff1->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff1->GetYaxis()->SetTitle("Counts");
   hDiff1->SetLineColor(kBlue);
@@ -313,109 +322,99 @@ void mymacro() {
   fitKStar1->SetLineColor(kRed);
   fitKStar1->SetLineWidth(4);
 
+  hDiff2->SetName("Diff2");
   hDiff2->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff2->GetYaxis()->SetTitle("Counts");
   hDiff2->SetLineColor(kBlue);
   hDiff2->SetLineWidth(2);
 
-  TCanvas *c1 = new TCanvas("c1", "Canvas for hParticleTypes", 800, 600);
+  TCanvas *c1 =
+      new TCanvas("c1", "Particle and its cinematic properties", 750, 750);
+  c1->Divide(2, 2);
+  c1->cd(1);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
   gStyle->SetOptStat(11);
   hParticleTypes->Draw("BAR2");
-  c1->SaveAs("hParticleTypes.pdf");
-  c1->SaveAs("hParticleTypes.C");
-  c1->SaveAs("hParticleTypes.root");
-
-  TCanvas *c2 = new TCanvas("c2", "Canvas for hPolarAngles", 800, 600);
+  c1->cd(2);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
   gStyle->SetOptFit(1111);
-  hPolarAngles->Draw("HIST");
-  fitPolar->Draw("SAME");
-  c2->SaveAs("hPolarAngles.pdf");
-  c2->SaveAs("hPolarAngles.C");
-  c2->SaveAs("hPolarAngles.root");
-
-  TCanvas *c3 = new TCanvas("c3", "Canvas for hAzimuthalAngles", 800, 600);
-  hAzimuthalAngles->Draw("HIST");
-  fitAzhimutal->Draw("SAME");
-  c3->SaveAs("hAzimuthalAngles.pdf");
-  c3->SaveAs("hAzimuthalAngles.C");
-  c3->SaveAs("hAzimuthalAngles.root");
-
-  TCanvas *c4 = new TCanvas("c4", "Canvas for hImpulse", 800, 600);
   hImpulse->Draw("HIST");
   fitImpulse->Draw("SAME");
-  c4->SaveAs("hImpulse.pdf");
-  c4->SaveAs("hImpulse.C");
-  c4->SaveAs("hImpulse.root");
+  c1->cd(3);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hPolarAngles->Draw("HIST");
+  fitPolar->Draw("SAME");
+  c1->cd(4);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hAzimuthalAngles->Draw("HIST");
+  fitAzhimutal->Draw("SAME");
+  c1->SaveAs("Particles_Properties.pdf");
+  c1->SaveAs("Particles_Properties.C");
+  c1->SaveAs("Particles_Properties.root");
 
-  TCanvas *c5 = new TCanvas("c5", "Canvas for hTransverseImpulse", 800, 600);
-  gStyle->SetOptFit(0000);
-  hTransverseImpulse->Draw("HIST");
-  c5->SaveAs("hTransverseImpulse.pdf");
-  c5->SaveAs("hTransverseImpulse.C");
-  c5->SaveAs("hTransverseImpulse.root");
 
-  TCanvas *c6 = new TCanvas("c6", "Canvas for hEnergy", 800, 600);
-  hEnergy->Draw("HIST");
-  c6->SaveAs("hEnergy.pdf");
-  c6->SaveAs("hEnergy.C");
-  c6->SaveAs("hEnergy.root");
-
-  TCanvas *c7 = new TCanvas("c7", "Canvas for hInvMassAll", 800, 600);
-  hInvMassAll->Draw("HIST");
-  c7->SaveAs("hInvMassAll.pdf");
-  c7->SaveAs("hInvMassAll.C");
-  c7->SaveAs("hInvMassAll.root");
-
-  TCanvas *c8 = new TCanvas("c8", "Canvas for hInvMassCon", 800, 600);
-  hInvMassCon->Draw("HIST");
-  c8->SaveAs("hInvMassCon.pdf");
-  c8->SaveAs("hInvMassCon.C");
-  c8->SaveAs("hInvMassCon.root");
-
-  TCanvas *c9 = new TCanvas("c9", "Canvas for hInvMassDis", 800, 600);
-  hInvMassDis->Draw("HIST");
-  c9->SaveAs("hInvMassDis.pdf");
-  c9->SaveAs("hInvMassDis.C");
-  c9->SaveAs("hInvMassDis.root");
-
-  TCanvas *c10 = new TCanvas("c10", "Canvas for hInvMassConPiK", 800, 600);
-  hInvMassConPiK->Draw("HIST");
-  c10->SaveAs("hInvMassConPiK.pdf");
-  c10->SaveAs("hInvMassConPiK.C");
-  c10->SaveAs("hInvMassConPiK.root");
-
-  TCanvas *c11 = new TCanvas("c11", "Canvas for hInvMassDisPiK", 800, 600);
-  hInvMassDisPiK->Draw("HIST");
-  c11->SaveAs("hInvMassDisPiK.pdf");
-  c11->SaveAs("hInvMassDisPiK.C");
-  c11->SaveAs("hInvMassDisPiK.root");
-
-  TCanvas *c12 = new TCanvas("c12", "Canvas for hBenchmark", 800, 600);
+  TCanvas *c2 = new TCanvas("c2", "Invariant mass difference", 1200, 400);
+  c2->Divide(3, 1);
+  c2->cd(1);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
   hBenchmark->Draw("HIST");
-  c12->SaveAs("hBenchmark.pdf");
-  c12->SaveAs("hBenchmark.C");
-  c12->SaveAs("hBenchmark.root");
-
-  TCanvas *c13 = new TCanvas("c13", "Canvas for hKStar", 800, 600);
-  hKStar->Draw("HIST");
-  c13->SaveAs("hKStar.pdf");
-  c13->SaveAs("hKStar.C");
-  c13->SaveAs("hKStar.root");
-
-  TCanvas *c14 = new TCanvas("c14", "Canvas for hDiff1", 800, 600);
-  gStyle->SetOptFit(1111);
+  c2->cd(2);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
   hDiff1->Draw("HIST");
   fitKStar1->Draw("SAME");
-  c14->SaveAs("hDiff1.pdf");
-  c14->SaveAs("hDiff1.C");
-  c14->SaveAs("hDiff1.root");
-
-  TCanvas *c15 = new TCanvas("c15", "Canvas for hDiff2", 800, 600);
+  c2->cd(3);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
   hDiff2->Draw("HIST");
   fitKStar2->Draw("SAME");
-  c15->SaveAs("hDiff2.pdf");
-  c15->SaveAs("hDiff2.C");
-  c15->SaveAs("hDiff2.root");
+  c2->SaveAs("Invariant_mass_difference.pdf");
+  c2->SaveAs("Invariant_mass_difference.C");
+  c2->SaveAs("Invariant_mass_difference.root");
 
-  TBrowser *browser = new TBrowser();
+  TCanvas *c3 = new TCanvas("c3", "TransverseImpulse", 375, 375);
+  gStyle->SetOptFit(0000);
+  hTransverseImpulse->Draw("HIST");
+  c3->SaveAs("TransverseImpulse.pdf");
+  c3->SaveAs("TransverseImpulse.C");
+  c3->SaveAs("TransverseImpulse.root");
+
+  TCanvas *c4 = new TCanvas("c4", "Energy", 375, 375);
+  hEnergy->Draw("HIST");
+  c4->SaveAs("Energy.pdf");
+  c4->SaveAs("Energy.C");
+  c4->SaveAs("Energy.root");
+
+  TCanvas *c5 = new TCanvas("c5", "InvMassAll", 375, 375);
+  hInvMassAll->Draw("HIST");
+  c5->SaveAs("InvMassAll.pdf");
+  c5->SaveAs("InvMassAll.C");
+  c5->SaveAs("InvMassAll.root");
+
+  TCanvas *c6 = new TCanvas("c6", "Invariant Mass", 750, 750);
+  c6->Divide(2, 2);
+  c6->cd(1);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hInvMassCon->Draw("HIST");
+  c6->cd(2);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hInvMassDis->Draw("HIST");
+  c6->cd(3);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hInvMassConPiK->Draw("HIST");
+  c6->cd(4);
+  gPad->SetLeftMargin(0.15);
+  gPad->SetBottomMargin(0.15);
+  hInvMassDisPiK->Draw("HIST");
+  c6->SaveAs("InvMass.pdf");
+  c6->SaveAs("InvMass.C");
+  c6->SaveAs("InvMass.root");
 }
