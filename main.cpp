@@ -142,7 +142,6 @@ int main() {
   }
   h13->Add(h9, h8, 1, -1);
 
-  std::cout << h12->GetMean() << '\t' << h12->GetRMS() << std::endl;
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
   h1->Write();
   h2->Write();
@@ -158,6 +157,4 @@ int main() {
   h12->Write();
   h13->Write();
   outputFile->Close();
-
-  std::cout << "Fino a qui tutto bene" << std::endl;
 }

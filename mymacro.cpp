@@ -342,6 +342,7 @@ void mymacro() {
 
   TCanvas *c4 = new TCanvas("c4", "Canvas for hImpulse", 800, 600);
   hImpulse->Draw("HIST");
+  fitImpulse->Draw("SAME");
   c4->SaveAs("hImpulse.pdf");
   c4->SaveAs("hImpulse.C");
   c4->SaveAs("hImpulse.root");
