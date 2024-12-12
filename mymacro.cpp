@@ -196,6 +196,7 @@ void mymacro() {
   hDiff2->Add(hInvMassDisPiK, hInvMassConPiK, 1, -1);
 
   TF1 *fitKStar1 = new TF1("fitKStar1", Gauss, 0, 7, 3);
+  fitKStar1->SetNpx(2000);
   fitKStar1->SetParameters(hDiff1->GetMaximum(), 0.89166, 0.05);
   hDiff1->Fit(fitKStar1);
   double extractedMass1 = fitKStar1->GetParameter(1);
@@ -214,6 +215,7 @@ void mymacro() {
   std::cout << "The maximum content is: " << hDiff1->GetMaximum() << std::endl;
 
   TF1 *fitKStar2 = new TF1("fitKStar2", Gauss, 0, 7, 3);
+  fitKStar2->SetNpx(2000);
   fitKStar2->SetParameters(hDiff2->GetMaximum(), 0.89166, 0.05);
   hDiff2->Fit(fitKStar2, "S");
   double extractedMass2 = fitKStar2->GetParameter(1);
@@ -227,10 +229,10 @@ void mymacro() {
             << fitKStar2->GetChisquare() / fitKStar2->GetNDF() << std::endl;
   std::cout << "the probability";  // vediamo da come abbiamo fatto prima
 
-  TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0, 7, 3);
-  fitBenchmark->SetParameters(hBenchmark->GetMaximum(), 0.8918,
-                              0.05); 
-  hBenchmark->Fit(fitBenchmark, "S");
+  TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0.7, 1.1, 3);
+  fitBenchmark->SetParameters(hBenchmark->GetMaximum(), 0.89166, 0.05);
+  fitBenchmark->SetNpx(2000);
+  hBenchmark->Fit(fitBenchmark, "S, L");
 
   // zona cosmetica
 
@@ -317,6 +319,7 @@ void mymacro() {
   hBenchmark->GetYaxis()->SetTitle("Counts");
   hBenchmark->SetLineColor(kBlue);
   hBenchmark->SetLineWidth(2);
+  hBenchmark->GetXaxis()->SetRangeUser(0.6, 1.2);
 
   // Custom range for Diff histograms based on observed data ranges
   hDiff1->SetName("Diff1");
@@ -324,6 +327,7 @@ void mymacro() {
   hDiff1->GetYaxis()->SetTitle("Counts");
   hDiff1->SetLineColor(kBlue);
   hDiff1->SetLineWidth(2);
+  hDiff1->GetXaxis()->SetRangeUser(0.6, 1.2);
   fitKStar1->SetLineColor(kRed);
   fitKStar1->SetLineWidth(4);
 
@@ -332,6 +336,7 @@ void mymacro() {
   hDiff2->GetYaxis()->SetTitle("Counts");
   hDiff2->SetLineColor(kBlue);
   hDiff2->SetLineWidth(2);
+  hDiff2->GetXaxis()->SetRangeUser(0.6, 1.2);
 
   TCanvas *c1 =
       new TCanvas("c1", "Particle and its cinematic properties", 750, 750);
@@ -361,8 +366,8 @@ void mymacro() {
   c1->SaveAs("Particles_Properties.C");
   c1->SaveAs("Particles_Properties.root");
 
-  TCanvas *c2 = new TCanvas("c2", "Invariant mass difference", 1200, 400);
-  c2->Divide(3, 1);
+  TCanvas *c2 = new TCanvas("c2", "Invariant mass difference", 500, 800);
+  c2->Divide(1, 3);
   c2->cd(1);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
