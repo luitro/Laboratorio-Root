@@ -320,6 +320,7 @@ void mymacro() {
   hBenchmark->SetLineColor(kBlue);
   hBenchmark->SetLineWidth(2);
   hBenchmark->GetXaxis()->SetRangeUser(0.6, 1.2);
+  hBenchmark->GetYaxis()->SetRangeUser(0.0, 1000.0);
 
   // Custom range for Diff histograms based on observed data ranges
   hDiff1->SetName("Diff1");

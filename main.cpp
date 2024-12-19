@@ -61,7 +61,7 @@ int main() {
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
       BINS, 0, 7);
   h11->Sumw2();
-  TH1F *h12 = new TH1F("h12", "Benchmark", BINS, 0, 7);
+  TH1F *h12 = new TH1F("h12", "Benchmark", 200, 0.8, 1.);
   h12->Sumw2();
   
   
