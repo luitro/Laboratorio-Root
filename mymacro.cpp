@@ -1,5 +1,4 @@
 #include <TApplication.h>
-#include <TBrowser.h>
 #include <TCanvas.h>
 #include <TF1.h>
 #include <TFile.h>
