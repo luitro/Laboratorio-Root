@@ -21,7 +21,7 @@ Double_t Gauss(Double_t *x, Double_t *par) {
 }
 
 void mymacro() {
-  Int_t BINS = 1E3;
+  Int_t BINS = 1.2*1E3;
 
   TFile *file = new TFile("histograms.root");
   TH1F *hParticleTypes = (TH1F *)file->Get("h1");
@@ -124,8 +124,8 @@ void mymacro() {
   else
     std::cout << "Something with hImpulse is wrong " << std::endl;
 
-  TF1 *fitImpulse = new TF1("Fit Impulse", "expo", 0, 10);
-  hImpulse->Fit(fitImpulse, "APE");
+  TF1 *fitImpulse = new TF1("Fit Impulse", "[0]*exp(-[1]*x)", 0, 10);
+  hImpulse->Fit(fitImpulse);
   chisquare = fitImpulse->GetChisquare();
   NDF = fitImpulse->GetNDF();
   probFit = fitImpulse->GetProb();
@@ -186,11 +186,6 @@ void mymacro() {
               << " entries; " << std::endl;
   else
     std::cout << "Something with hBenchmark is wrong " << std::endl;
-  /*if (hKStar)
-    std::cout << "Ok, hKStar has " << hKStar->GetEntries() << " entries; "
-              << std::endl;
-  else
-    std::cout << "Something with hKStar is wrong " << std::endl;*/
 
   hDiff1->Add(hInvMassDis, hInvMassCon, 1, -1);
   hDiff2->Add(hInvMassDisPiK, hInvMassConPiK, 1, -1);
@@ -217,7 +212,7 @@ void mymacro() {
   TF1 *fitKStar2 = new TF1("fitKStar2", Gauss, 0, 7, 3);
   fitKStar2->SetNpx(2000);
   fitKStar2->SetParameters(hDiff2->GetMaximum(), 0.89166, 0.05);
-  hDiff2->Fit(fitKStar2, "S");
+  hDiff2->Fit(fitKStar2);
   double extractedMass2 = fitKStar2->GetParameter(1);
   double extractedWidth2 = fitKStar2->GetParameter(2);
 
@@ -229,10 +224,10 @@ void mymacro() {
             << fitKStar2->GetChisquare() / fitKStar2->GetNDF() << std::endl;
   std::cout << "the probability";  // vediamo da come abbiamo fatto prima
 
-  TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0.7, 1.1, 3);
+  TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0, 7, 3);
   fitBenchmark->SetParameters(hBenchmark->GetMaximum(), 0.89166, 0.05);
   fitBenchmark->SetNpx(2000);
-  hBenchmark->Fit(fitBenchmark, "S, L");
+  hBenchmark->Fit(fitBenchmark);
 
   // zona cosmetica
 
@@ -315,29 +310,32 @@ void mymacro() {
   hInvMassDisPiK->SetLineWidth(2);
 
   hBenchmark->SetName("Benchmark");
-  hBenchmark->GetXaxis()->SetTitle("Benchmark Variable");
+  hBenchmark->GetXaxis()->SetTitle("GeV/c^2");
   hBenchmark->GetYaxis()->SetTitle("Counts");
   hBenchmark->SetLineColor(kBlue);
-  hBenchmark->SetLineWidth(2);
+  hBenchmark->SetLineWidth(1);
   hBenchmark->GetXaxis()->SetRangeUser(0.6, 1.2);
-  hBenchmark->GetYaxis()->SetRangeUser(0.0, 1000.0);
+  fitBenchmark->SetLineColor(kRed);
+  fitBenchmark->SetLineWidth(2);
 
   // Custom range for Diff histograms based on observed data ranges
   hDiff1->SetName("Diff1");
   hDiff1->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff1->GetYaxis()->SetTitle("Counts");
   hDiff1->SetLineColor(kBlue);
-  hDiff1->SetLineWidth(2);
+  hDiff1->SetLineWidth(1);
   hDiff1->GetXaxis()->SetRangeUser(0.6, 1.2);
   fitKStar1->SetLineColor(kRed);
-  fitKStar1->SetLineWidth(4);
+  fitKStar1->SetLineWidth(2);
 
   hDiff2->SetName("Diff2");
   hDiff2->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff2->GetYaxis()->SetTitle("Counts");
   hDiff2->SetLineColor(kBlue);
-  hDiff2->SetLineWidth(2);
+  hDiff2->SetLineWidth(1);
   hDiff2->GetXaxis()->SetRangeUser(0.6, 1.2);
+  fitKStar2->SetLineColor(kRed);
+  fitKStar2->SetLineWidth(2);
 
   TCanvas *c1 =
       new TCanvas("c1", "Particle and its cinematic properties", 750, 750);
@@ -373,16 +371,19 @@ void mymacro() {
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
   hBenchmark->Draw("HIST");
+  hBenchmark->Draw("E SAME");
   fitBenchmark->Draw("SAME");
   c2->cd(2);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
   hDiff1->Draw("HIST");
+  hDiff1->Draw("E SAME");
   fitKStar1->Draw("SAME");
   c2->cd(3);
   gPad->SetLeftMargin(0.15);
   gPad->SetBottomMargin(0.15);
   hDiff2->Draw("HIST");
+  hDiff2->Draw("E SAME");
   fitKStar2->Draw("SAME");
   c2->SaveAs("Invariant_mass_difference.pdf");
   c2->SaveAs("Invariant_mass_difference.C");

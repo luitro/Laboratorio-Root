@@ -18,20 +18,21 @@ int main() {
   Particle::AddParticleType("P-", 0.93827, -1, 0);
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
 
-  // Set the seed for the 
+  // Set the seed for the simulation
   gRandom->SetSeed();
 
+  // Declare and define some parameters of the events
   int N = 120;
   Particle EventParticles[N];
-  Double_t phi;
-  Double_t theta;
-  Double_t p;
-  Double_t x;
+  Double_t phi;  // Azimuthual angle
+  Double_t theta; // Polar angle
+  Double_t p; // Impulse (module)
+  Double_t x; // 
   int firstempty;
-  double PiK = 0.13957 + 0.49367;
+  double PiK = 0.13957 + 0.49367;  // the sum of Pion and Kaon masses
+  Int_t BINS = 1.2 * 1E3;  // number of bins for invariant mass histograms
 
-  Int_t BINS = 1E3;
-
+  // Define all the histograms
   TH1F *h1 = new TH1F("h1", "Particle types", 7, 0, 7);
   h1->Sumw2();
   TH1F *h2 = new TH1F("h2", "Polar angles", 1E3, 0, TMath::Pi());
@@ -44,7 +45,8 @@ int main() {
   h5->Sumw2();
   TH1F *h6 = new TH1F("h6", "Energy", 1E4, 0, 10);
   h6->Sumw2();
-  TH1F *h7 = new TH1F("h7", "Invariant mass between all particles", 1E5, 0, 10);
+  TH1F *h7 =
+      new TH1F("h7", "Invariant mass between all particles", BINS, 0, 10);
   h7->Sumw2();
   TH1F *h8 = new TH1F(
       "h8", "Invariant mass between concordant charge particles", BINS, 0, 7);
@@ -61,15 +63,17 @@ int main() {
       "h11", "Invariant mass between disconcordant charge Pi and K particles",
       BINS, 0, 7);
   h11->Sumw2();
-  TH1F *h12 = new TH1F("h12", "Benchmark", 200, 0.8, 1.);
+  TH1F *h12 = new TH1F("h12", "Benchmark", 1.5 * 1E3, 0, 7);
   h12->Sumw2();
-  
-  
 
+  // Outer loop: processes a total of 1E5 events. Each event corresponds to a
+  // physical process or simulation step.
   for (int i = 0; i < 1E5; ++i) {
-    firstempty = 100;
+    firstempty = 100;  // Reset the "firstempty" variable for each event.
+                       // Inner loop: simulates the generation of 100 particles
+                       // for the current event.
     for (Int_t j = 0; j < 100; ++j) {
-      theta = gRandom->Uniform(0., TMath::Pi());
+      theta = gRandom->Uniform(0., TMath::Pi());  //
       phi = gRandom->Uniform(0., 2 * TMath::Pi());
       p = gRandom->Exp(1.);
       EventParticles[j].SetP(p * sin(theta) * cos(phi),
@@ -140,7 +144,6 @@ int main() {
       }
     }
   }
- 
 
   TFile *outputFile = new TFile("histograms.root", "RECREATE");
   h1->Write();
