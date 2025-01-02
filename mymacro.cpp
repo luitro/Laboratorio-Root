@@ -12,7 +12,7 @@
 
 #include "particle.hpp"
 
-//
+// Define the Gauss function
 Double_t Gauss(Double_t *x, Double_t *par) {
   Double_t xx = x[0];
   Double_t val = par[0] * TMath::Exp(-(xx - par[1]) * (xx - par[1]) / 2. /
@@ -21,7 +21,7 @@ Double_t Gauss(Double_t *x, Double_t *par) {
 }
 
 void mymacro() {
-  Int_t BINS = 1.2*1E3;
+  Int_t BINS = 1.2*1E3; // Number of bins for invariant mass histograms
 
   TFile *file = new TFile("histograms.root");
   TH1F *hParticleTypes = (TH1F *)file->Get("h1");
@@ -206,7 +206,7 @@ void mymacro() {
   std::cout << "Chi square/ NDF of hDiff1: "
             << fitKStar1->GetChisquare() / fitKStar1->GetNDF() << std::endl;
   std::cout << "the probability"
-            << std::endl;  // vediamo da come abbiamo fatto prima
+            << std::endl; 
   std::cout << "The maximum content is: " << hDiff1->GetMaximum() << std::endl;
 
   TF1 *fitKStar2 = new TF1("fitKStar2", Gauss, 0, 7, 3);
@@ -222,7 +222,7 @@ void mymacro() {
             << std::endl;
   std::cout << "Chi square/ NDF of hDiff1: "
             << fitKStar2->GetChisquare() / fitKStar2->GetNDF() << std::endl;
-  std::cout << "the probability";  // vediamo da come abbiamo fatto prima
+  std::cout << "the probability";  
 
   TF1 *fitBenchmark = new TF1("fitBenchmark", Gauss, 0, 7, 3);
   fitBenchmark->SetParameters(hBenchmark->GetMaximum(), 0.89166, 0.05);
@@ -316,9 +316,8 @@ void mymacro() {
   hBenchmark->SetLineWidth(1);
   hBenchmark->GetXaxis()->SetRangeUser(0.6, 1.2);
   fitBenchmark->SetLineColor(kRed);
-  fitBenchmark->SetLineWidth(2);
+  fitBenchmark->SetLineWidth(1);
 
-  // Custom range for Diff histograms based on observed data ranges
   hDiff1->SetName("Diff1");
   hDiff1->GetXaxis()->SetTitle("Invariant Mass Difference (GeV/c^2)");
   hDiff1->GetYaxis()->SetTitle("Counts");
